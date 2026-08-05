@@ -4,6 +4,8 @@ Profº Diogo TB
 
 Escola SENAI
 
+29/07/2026 
+
 2º Semestre 2026
 
 ## Objetivos do Curso
@@ -121,3 +123,20 @@ Os tipos de requisição HTTP indicam a ação que o usuário deseja executar no
 **PHP** (HyperText PreProcessor) é uma linguagem de programação interpretada e open source, focada no desenvolvimento de sistemas para web. Pode ser usada junto com HTML para criação de páginas web dinâmicas.
 
 O **PHP** de fato é uma das linguagens de programação mais populares da atualidade. Ela permite que você crie aplicações web robustas, de uma maneira muito simplificada e direta. A linguagem tem diversos recursos que facilitam e aceleram o processo de desenvolvimento de sites e sistemas para web. E além do mais, ela tem um ótimo ecossistema, uma excelente comunidade e um grande mercado de trabalho.
+
+#### Instalando o PHP
+
+- Fazer o download do PHP (php.net).
+
+- ZIP - NTS (Non Thread Safe), versão 8.5.9
+
+- Descompactar o arquivo do PHP na pasta *C:\src\php* (para descompactar, usar o *7-Zip* = melhor).
+
+- ***Nunca salvar arquivos ou programas na raiz do sistema (C:)***!!!
+
+- Adicionar a pasta do PHP (*C:\src\php*) nas Variáveis de Ambiente do sistema (*PATH*).
+
+>Verificar a instalação rodando o comando: `php --version`.
+
+#### Criando minha primeira aplicação em PHP
+
