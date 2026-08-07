@@ -174,7 +174,7 @@ Declarar variávies é alocar um espaço na memória que permite a inclusão e m
 - não permite ***interpolação*** (utilização de variáveis dentro de um texto, utilizando aspas duplas)
 
 ---
-#### Estudo de Operadores
+### Estudo de Operadores
 
 **Aritméticos:** São usados para realizar cálculos.
 |Operador|Nome|Exemplo|Resultado|
@@ -189,6 +189,7 @@ Declarar variávies é alocar um espaço na memória que permite a inclusão e m
 **OBS:** O Operador % permite ordenar listas e organizar filas e pilhas.
 
 ---
+
 **Relacionais:** Permite o relacionamento entre dois ou mais valores, o resultado de uma operação é sempre uma booleana (verdadeiro ou falso).
 
 |Operador|Significado|Exemplo|Resultado|
@@ -198,6 +199,22 @@ Declarar variávies é alocar um espaço na memória que permite a inclusão e m
 |<|Menor que|10 < 20|True|
 |<=|Menor ou igual a|10 <= 5|False|
 |==|Comparação de valor|"10"==10|True|
+|===|Comparação estrita|"10"===10|False|
+|!=|Diferente|"10"!=10|False|
+|!==|Estritamente diferente|"10"!==10|True|
 
 ---
-**Lógicos:** 
+
+**Lógicos:** Permite a combinação entre sentenças.
+
+- Operador AND (E) -> && : Para o resultado ser verdadeiro, todas as combinações precisam ser verdadeiras.
+    - true && true -> true
+    - true && false -> false
+
+- Operador OR (OU) -> || : para o resultado ser verdadeiro, basta apenas uma condição ser verdadeira.
+    - false || true -> true
+    - false || false -> false
+
+- Operador NOT (NÃO) -> 1 : Inverte a lógica da operação
+    - !true -> false
+    - !false -> true
