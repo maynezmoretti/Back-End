@@ -137,6 +137,3 @@ O **PHP** de fato é uma das linguagens de programação mais populares da atual
 - Adicionar a pasta do PHP (*C:\src\php*) nas Variáveis de Ambiente do sistema (*PATH*).
 
 >Verificar a instalação rodando o comando: `php --version`.
-
-#### Criando minha primeira aplicação em PHP
-
