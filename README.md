@@ -136,7 +136,7 @@ O **PHP** de fato é uma das linguagens de programação mais populares da atual
 
 >Verificar a instalação rodando o comando: `php --version`.
 
-##### Criando Minha Primeira Aplicação em PHP
+#### Criando Minha Primeira Aplicação em PHP
 
 1. Antes de começar a codar:
 
@@ -150,5 +150,54 @@ O **PHP** de fato é uma das linguagens de programação mais populares da atual
 - Desabilitar o PHP Nativo do VSCode (@builtin PHP).
 
 ---
-2. Esse comando inicializa a aplicação PHP:
+>Esse comando inicializa a aplicação PHP:
 >`php -S localhost:8080`
+
+---
+2. Hello World ***(muito importante)***
+
+#### Estudo de Variáveis e Constantes em PHP
+
+Declarar variávies é alocar um espaço na memória que permite a inclusão e manipulação de dados. 
+
+**Variávies:**
+
+- devem ser declaradas usando "$" antes do nome da variável
+- são não tipadas (não precisa declarar o tipo dela na criação)
+- podem ser String, Numéricas (int/interger e float), Booleanas e Nulas; não permite declaração de Undefined
+> Usar o `declare(strict_types=1);` na primeira linha do arquivo -> blinda o sistema contra conflitos de tipos de variáveis
+
+**Constantes:**
+
+- não podem ser mudadas ou recicladas após a criação
+- podem ser criadas usando `const`ou `define`
+- não permite ***interpolação*** (utilização de variáveis dentro de um texto, utilizando aspas duplas)
+
+---
+#### Estudo de Operadores
+
+**Aritméticos:** São usados para realizar cálculos.
+|Operador|Nome|Exemplo|Resultado|
+|--------|----|-------|---------|
+|+|Adição|10+5|15|
+|-|Subtração|10-5|5|
+|*|Multiplicação|10*5|50
+|/|Divisão|10/5|2|
+|%|Módulo (resto)|10%3|1 (10/3 = 3, ou seja, sobra 1)|
+|**|Expoente|2**3|8|
+
+**OBS:** O Operador % permite ordenar listas e organizar filas e pilhas.
+
+---
+**Relacionais:** Permite o relacionamento entre dois ou mais valores, o resultado de uma operação é sempre uma booleana (verdadeiro ou falso).
+
+|Operador|Significado|Exemplo|Resultado|
+|--------|-----------|-------|---------|
+|>|Maior que|18 > 18|False|
+|>=| Maior ou igual a|18 >= 18|True|
+|<|Menor que|10 < 20|True|
+|<=|Menor ou igual a|10 <= 5|False|
+|==|Comparação de valor|"10"==10|True|
+
+---
+**Lógicos:** 
