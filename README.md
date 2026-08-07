@@ -2,9 +2,7 @@
 
 Profº Diogo TB
 
-Escola SENAI
-
-29/07/2026 
+Escola SENAI 
 
 2º Semestre 2026
 
