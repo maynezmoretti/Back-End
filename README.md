@@ -128,7 +128,7 @@ O **PHP** de fato é uma das linguagens de programação mais populares da atual
 
 - Fazer o download do PHP (php.net).
 
-- ZIP - NTS (Non Thread Safe), versão 8.5.9
+- ZIP -> NTS (Non Thread Safe), versão 8.5.9
 
 - Descompactar o arquivo do PHP na pasta *C:\src\php* (para descompactar, usar o *7-Zip* = melhor).
 
@@ -137,3 +137,20 @@ O **PHP** de fato é uma das linguagens de programação mais populares da atual
 - Adicionar a pasta do PHP (*C:\src\php*) nas Variáveis de Ambiente do sistema (*PATH*).
 
 >Verificar a instalação rodando o comando: `php --version`.
+
+##### Criando Minha Primeira Aplicação em PHP
+
+1. Antes de começar a codar:
+
+- Preparar meu VSCODE;
+- Criar um Profile próprio para PHP;
+- Instalar extensões necessárias para transformar o VSCode em uma IDE:
+    - **PHP Intelephense** -> Permite a utilização de Snippets (atalho de código)
+    - **PHP Debug** -> Ajuda a encontrar erros de código
+    - **PHP Cs Fixer** -> Formatação de códigos (Identação)
+    - **PHP Server** -> Ajuda na criação de um servidor local para PHP
+- Desabilitar o PHP Nativo do VSCode (@builtin PHP).
+
+---
+2. Esse comando inicializa a aplicação PHP:
+>`php -S localhost:8080`
