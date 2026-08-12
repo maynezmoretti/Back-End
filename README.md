@@ -215,6 +215,6 @@ Declarar variávies é alocar um espaço na memória que permite a inclusão e m
     - false || true -> true
     - false || false -> false
 
-- Operador NOT (NÃO) -> 1 : Inverte a lógica da operação
+- Operador NOT (NÃO) -> ! : Inverte a lógica da operação
     - !true -> false
     - !false -> true
