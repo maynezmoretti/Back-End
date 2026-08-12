@@ -25,7 +25,7 @@ Carga Horária: 105h (1º Semestre) e 120h (2º Semestre)
 
 Duração: 20 Semanas (1º Semestre) e 20 Semanas (2º Semestre)
 
-### Semana 1: Introdução ao BackEnd e Configuração do Ambiente PHP
+## SEMANA 1 - Introdução ao BackEnd e Configuração do Ambiente PHP
 
 ### O que é BackEnd?
 
@@ -98,7 +98,7 @@ graph TD
 
 - **Ação do Usuário:** Envia uma solicitação pela UI (Interface do Usuário).
 **Exemplo de UI:** Tela do Celular, Navegador da Internet, Alexa, IOT...
-- **Enviar uma Requisição/Request**: A UI transforma a ação do usuário em uma Requisição HTTP.
+- **Enviar uma Requisição/Request:** A UI transforma a ação do usuário em uma Requisição HTTP.
 - **O Processamento BackEnd:** O código BackEnd recebe o pedido, valida os dados e decide o que fazer.
 **Exemplo:** Consultar uma informação no Banco de Dados.
 - **Resposta/Response:** O servidor devolde o resultado para a UI.
@@ -155,6 +155,9 @@ O **PHP** de fato é uma das linguagens de programação mais populares da atual
 
 ---
 2. Hello World ***(muito importante)***
+
+---
+## SEMANA 2 - Variáveis, Constantes e Operadores em PHP
 
 #### Estudo de Variáveis e Constantes em PHP
 
@@ -218,3 +221,51 @@ Declarar variávies é alocar um espaço na memória que permite a inclusão e m
 - Operador NOT (NÃO) -> ! : Inverte a lógica da operação
     - !true -> false
     - !false -> true
+
+---
+## SEMANA 3 - Estrutura de Controle de Dados (Condicionais e Repetição)
+
+- **Conteúdo:** Estrutura `if`, `else` e `elseif`; Operadores ternários; `match` -> substituto do `switch/case`; Loops `for`, `while`, `do-while` e `foreach`.
+
+### Estrutura de Controle de Dados ajudam no Processo de Automatização em Programas e Sistemas
+
+#### ***Condicionais (IF, ELSE, ELSEIF)***
+
+**Formas de Uso:**
+
+- Uso do `if` apenas
+**Exemplo:** Aplicar desconto de 10% em compras acima de 100 reais.
+
+```mermaid
+graph LR
+
+A[Comando] --> B{Condição} --> C[Ação]
+```
+
+>PHP:
+```php
+if($valorCompra > 100){
+    $valorFinal = $valorCompra * 0.9;
+}
+```
+---
+
+- Uso do `if` e do `else`
+**Exemplo:** Aplicar um desconto de 10% para compras acima de 100 reais e 5% para as demais compras.
+
+```mermaid
+graph LR
+
+A[Comando] --> B{Condição}
+B --> |true| C[Ação 1]
+B --> |false| D[Ação 2]
+```
+
+>PHP:
+```php
+if($valorCompra > 100){
+    $valorFinal = $valorCompra * 0.9;
+} else{
+    $valorFinal = $valorCompra * 0.95;
+}
+```
