@@ -10,15 +10,15 @@ table{
 }
 
 th{
-    border: 1px solid #ccc;
+    border: 1px solid #4c0d70;
     padding: 8px;
     text-align: right;
-    background-color: #f4f4f4;
+    background-color: #7014a5;
     font-weight: bold;
 }
 
 td{
-    border: 1px solid #ccc;
+    border: 1px solid #7014a5;
     padding: 8px;
     text-align: left;
 }
