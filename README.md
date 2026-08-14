@@ -334,7 +334,7 @@ $status = ($idade >= 18) ? "Maior de idade" : "Menor de idade";
 
 $status2 = ($idade > 60) ? "Idoso" : ($idade >= 18) ? "Adulto" : "Criança";
 
-echo $status
+echo $status;
 ```
 ---
 ### Expressão Condicional `match` (PHP 8)
