@@ -234,6 +234,7 @@ Declarar variávies é alocar um espaço na memória que permite a inclusão e m
 **Formas de Uso:**
 
 - Uso do `if` apenas
+
 **Exemplo:** Aplicar desconto de 10% em compras acima de 100 reais.
 
 ```mermaid
@@ -251,6 +252,7 @@ if($valorCompra > 100){
 ---
 
 - Uso do `if` e do `else`
+
 **Exemplo:** Aplicar um desconto de 10% para compras acima de 100 reais e 5% para as demais compras.
 
 ```mermaid
@@ -268,4 +270,105 @@ if($valorCompra > 100){
 } else{
     $valorFinal = $valorCompra * 0.95;
 }
+```
+---
+
+- Uso do `elseif` (`if` encadeado) -> Estrutura usada para manipulação de dados em duas ou mais condicionais.
+
+**Exemplo:** Compras acima de 200 reais tem 15% de desconto, compras acima de 100 reais tem 10% de desconto e demais compras tem 5% de desconto.
+
+```mermaid
+graph LR
+
+A[Comando] --> B{Condição 1}
+B --> |true| C[Ação 1]
+B --> |false| D{Condição 2}
+D --> |true| E[Ação 2]
+D --> |false| F[Ação 3]
+```
+
+>PHP:
+```php
+if($valorCompra > 200){
+    $valorFinal = $valorCompra * 0.85;
+} elseif ($valorCompra > 100){
+    $valorFinal = $valorCompra * 0.9;
+} else {
+    $valorFinal = $valorCompra * 0.95;
+}
+```
+*OBS:* **Sempre** usar `elseif` para situações que precisam de mais de uma condição, ou seja, fazer encadeamento das condições.
+
+---
+
+- Uso ***ERRADO*** do `if`:
+
+>PHP:
+```php
+if ($valorCompra > 200){
+    $valorFinal = $valorCompra * 0.85;
+}
+if ($valorCompra > 100){
+    $valorFinal = $valorCompra * 0.9;
+} else {
+    $valorFinal = $valorCompra * 0.95;
+}
+```
+---
+### Operadores Ternários
+
+Atalho para a estrutura condicional `if/else`, normalmente escrito em uma única linha de código.
+
+> `condição ? verdadeiro : falso;`
+
+-Perfeito para decisões curtas de uma linha de comando.
+
+**Exemplo:** Verificar se a pessoa é maior de idade (18).
+
+>PHP:
+```php
+$idade = 20;
+// O formato é (condição ? verdadeiro : falso;)
+
+$status = ($idade >= 18) ? "Maior de idade" : "Menor de idade";
+
+$status2 = ($idade > 60) ? "Idoso" : ($idade >= 18) ? "Adulto" : "Criança";
+
+echo $status
+```
+---
+### Expressão Condicional `match` (PHP 8)
+
+No mercado atual de PHP, não se usa mais uma `Switch/Case` para chegar em valores fixos, usa-se o `match`. Ele compara um valor e retorna diretamente o resultado caso atenda a condição.
+
+```mermaid
+graph TD
+
+A[Valor] --> B{Condicional}
+B --> C[Ação 1]
+B --> D[Ação 2]
+B --> E[Ação 3]
+B --> F[Ação 4]
+B --> G[Ação ...]
+B --> H[Ação default]
+```
+---
+**Exemplo:** Selecionar o dia da semana a partir de um número.
+
+>PHP:
+```php
+$diaSemanaNumerico = date("W"); // Pega o dia da semana em formato numérico
+
+$nomeDiaSemana = match($diaSemanaNumerico){
+    "0" -> "Domingo",
+    "1" -> "Segunda",
+    "2" -> "Terça",
+    "3" -> "Quarta",
+    "4" -> "Quinta",
+    "5" -> "Sexta",
+    "6" -> "Sábado",
+    "default" -> "Dia inválido"
+};
+
+echo "Hoje é: $nomeDiaSemana";
 ```
