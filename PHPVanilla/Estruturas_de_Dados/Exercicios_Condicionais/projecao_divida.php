@@ -13,7 +13,8 @@ A Regra da Anistia: Por causa de uma campanha do banco, no 6º mês não haverá
 
 <?php
 
-$categoriaCliente = 'A';
+echo "Digite a categoria do cliente: ";
+$categoriaCliente = readline();
 $divida = 1000.00;
 $mesesAtraso = 12;
 
