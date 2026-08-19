@@ -1,15 +1,4 @@
-<!-- O banco  precisa de um painel financeiro que projete a evolução de uma dívida de um cliente inadimplente ao longo de 12 meses. O sistema deve calcular os "Juros Compostos" mês a mês.
-
-Regras de Negócio:
-Classificação de Risco: O sistema deve avaliar a Categoria do Cliente ('A', 'B', 'C') utilizando a estrutura match e definir a taxa de juros:
-Categoria 'A' ➔ Juros de 0.01 (1% ao mês)
-Categoria 'B' ➔ Juros de 0.02 (2% ao mês)
-Categoria 'C' ➔ Juros de 0.03 (3% ao mês)
-Qualquer outra coisa (default) ➔ Juros de 0.05 (5% - Risco Máximo)
-Projeção da Dívida: Você deve usar um laço for para gerar exatamente 12 meses de dívida.
-
-Cálculo: Todo mês, o valor da dívida sofre um aumento. A fórmula de cada mês é: Juros do Mês = Dívida Atual * Taxa. O saldo atualizado passa a ser Dívida Atual + Juros do Mês.
-A Regra da Anistia: Por causa de uma campanha do banco, no 6º mês não haverá cobrança de juros! Você deve usar o comando continue para identificar o mês 6, pular o cálculo matemático, e imprimir uma mensagem de isenção na tabela. -->
+<!-- DESAFIO EM SALA: SIMULADOR DE COBRANÇA (FINANSENAI) -->
 
 <?php
 
