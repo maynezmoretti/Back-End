@@ -12,32 +12,33 @@ Cálculo: Todo mês, o valor da dívida sofre um aumento. A fórmula de cada mê
 A Regra da Anistia: Por causa de uma campanha do banco, no 6º mês não haverá cobrança de juros! Você deve usar o comando continue para identificar o mês 6, pular o cálculo matemático, e imprimir uma mensagem de isenção na tabela. -->
 
 <?php
-declare(strict_types=1);
 
 $categoriaCliente = 'A';
 $divida = 1000.00;
+$mesesAtraso = 12;
 
-$taxa = match ($categoriaCliente) {
+// Definir a taxa de juros de acordo com a classificação do cliente
+
+$taxaJuros = match ($categoriaCliente) {
     'A' => 0.01,
     'B' => 0.02,
     'C' => 0.03,
     default => 0.05
 };
 
-echo "Projeção da Divida\n";
-echo "Categoria do cliente: $categoriaCliente\n";
-echo "Taxa de juros: " . ($taxa * 100) . "% ao mes\n";
-echo "Divida inicial: R$ " . number_format($divida, 2, ',', '.') . "\n";
+// Demonstrar a evolução da dívida ao longo de 12 meses
 
-for ($mes = 1; $mes <= 12; $mes++) {
+for ($mes = 1; $mes <= $mesesAtraso; $mes++) {
 
-    if ($mes == 6) {
+// Regra da Anistia
+
+    if ($mes === 6) {
         echo "Mês $mes: Isenção de Juros\n";
         echo "Saldo: R$ " . number_format($divida, 2, ',', '.') . "\n";
         continue;
     }
 
-    $juros = $divida * $taxa;
+    $juros = $divida * $taxaJuros;
     $divida = $divida + $juros;
 
     echo "Mês $mes:\n";
