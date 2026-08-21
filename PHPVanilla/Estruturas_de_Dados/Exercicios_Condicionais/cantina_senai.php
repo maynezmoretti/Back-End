@@ -12,12 +12,16 @@ $produtos = [
 $pedido = [];
 $opcao = 0;
 
-echo "CANTINA SENAI\n";
+do{
+echo "==========CANTINA SENAI==========\n";
+echo "Escolha a opção desejada:\n";
 echo "1 - Listar produtos\n";
 echo "2 - Adicionar produto ao pedido\n";
 echo "3 - Exibir resumo do pedido\n";
 echo "4 - Finalizar compra\n";
 echo "0 - Sair sem finalizar\n";
+echo "=================================\n";
+$opcao = readline();
 
-
+} while($opcao=="0");
 ?>
