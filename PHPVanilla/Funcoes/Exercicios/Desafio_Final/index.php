@@ -6,7 +6,7 @@ declare(strict_types=1);
 require_once 'utilitarios.php';
 
 // Dados simulados
-$nomeUsuario = "Ana Clara Silva";
+$nomeUsuario = "Mayne Zardo Moretti";
 $cpfDigitado = "123.456.789-00";
 $valorCompra = 150.00;
 
@@ -19,7 +19,7 @@ $valorCompra = 150.00;
     <style>
         body { font-family: Arial, sans-serif; background: #ecf0f1; padding: 20px;}
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px;}
-        .avatar { width: 50px; height: 50px; background: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;}
+        .avatar { width: 50px; height: 50px; background: #8a34db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;}
     </style>
 </head>
 <body>
@@ -29,7 +29,7 @@ $valorCompra = 150.00;
         
         <!-- DESAFIO 2: Chame a função gerarIniciais($nomeUsuario) aqui dentro para imprimir o Avatar! -->
         <div class="avatar">
-            <?php echo "???"; // Altere aqui ?>
+            <?php echo gerarIniciais($nomeUsuario); // Altere aqui ?>
         </div>
 
         <p><strong>Nome:</strong> <?php echo $nomeUsuario; ?></p>
