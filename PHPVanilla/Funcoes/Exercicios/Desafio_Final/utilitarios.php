@@ -34,13 +34,21 @@ function aplicarDesconto(float &$preco, float $porcentagem): void {// 100 - 10%
 
 function gerarIniciais(string $nomeCompleto): string {
     // Escreva sua lógica aqui!
-    // Entradada da Função => "Maria Eduarda Pereira" => Saída: MEP
+    // Entradada da Função => "Mayne Zardo Moretti" => Saída: MZM
     $palavras = explode(" ",$nomeCompleto); // => ["Mayne", "Zardo", "Moretti"]
+    
+    $iniciais = ""; // => M + Z + M
+    //Percorrer o Vetor -> item por item e pegar a letra inicial de cada item
+    foreach($palavras as $palavra){
+        //para cada palavra
+        if($palavra !== ""){
+            $letra = substr($palavra, 0, 1);
+            //concaternar a $iniciais
+            $iniciais = $letra;
+        }
+    }
 
-
-
+    // Retornar o resultado
+    return strtoupper($iniciais); // converte as iniciais para UpperCase
 }
-
-
-
 ?>
