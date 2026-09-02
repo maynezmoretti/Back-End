@@ -1,0 +1,33 @@
+arquivo style.css titulo {
+    color: #c5127b;
+}
+
+.subtitulo {
+    color: #f11079;
+}
+
+.valor {
+    font-size: 18px;
+}
+
+.saldo {
+    font-size: 18px;
+    color: rgb(255, 145, 178);
+}
+
+.tabela {
+    background-color: white;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.tabela th {
+    background-color: #e60681;
+    color: white;
+    padding: 10px;
+}
+
+.tabela td {
+    padding: 10px;
+    border: 1px solid #ddd;
+};
