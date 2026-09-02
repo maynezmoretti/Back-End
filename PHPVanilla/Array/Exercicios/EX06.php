@@ -1,6 +1,7 @@
 <?php
-
 declare(strict_types=1);
+
+// Exercício 6: Dashboard Financeiro (Extrato Bancário)
 
 $extrato = [
     ["data" => "2026-09-01", "descricao" => "Salário", "tipo" => "Entrada", "valor" => 4000.00],
