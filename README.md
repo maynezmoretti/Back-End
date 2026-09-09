@@ -32,6 +32,23 @@ Escola SENAI
 
 ### O que é BackEnd?
 
+`É a resposta/requisição do usuário!!!`
+
+- **Requisição:** É o pedido enviado por um cliente (como um navegador ou aplicativo) para um servidor com o objetivo de buscar, enviar, atualizar ou apagar dados.
+
+#### **Tipos de Requisição HTTP**
+
+Os tipos de requisição HTTP indicam a ação que o usuário deseja executar no servidor. As principais ações são:
+
+- **GET:** Pede dados de um lugar específico do servidor. Não faz alterações no servidor.
+- **DELETE:** Apaga um dado do servidor.
+- **POST:** Envia dados novos para *criar* algo ou processar informações no servidor.
+- **PUT/PATCH:** Modifica um dado já existente.
+>**PUT:** Modificação completa de um objeto/item.
+
+>**PATCH:** Modificação parcial de um objeto/item.
+---
+
 O BackEnd é a parte de uma aplicação que o usuário não vê, mas que faz tudo funcionar por trás das telas.
 
 Ele é a parte de um sistema que funciona nos servidores, sendo responsável por executar a lógica da aplicação, processar informações, aplicar as regras de negócio, gerenciar bancos de dados/armazenar dados e garantir o funcionamento correto do sistema.
@@ -107,17 +124,6 @@ graph TD
 - **Resposta/Response:** O servidor devolde o resultado para a UI.
 **Exemplo:** Um login autorizado, confirmação de uma compra...
 
-#### Tipos de Requisição HTTP
-
-Os tipos de requisição HTTP indicam a ação que o usuário deseja executar no servidor. As principais ações são:
-
-- **GET:** Pede dados de um lugar específico do servidor. Não faz alterações no servidor.
-- **DELETE:** Apaga um dado do servidor.
-- **POST:** Envia dados novos para *criar* algo ou processar informações no servidor.
-- **PUT/PATCH:** Modifica um dado já existente.
->**PUT:** Modificação completa de um objeto/item.
-
->**PATCH:** Modificação parcial de um objeto/item.
 ---
 ### Iniciando o PHP
 
@@ -785,3 +791,52 @@ Exibe com mais detalhes as informações de um array ou variável em PHP.
 echo var_dump ($frutas);
 //mostra tudo: tipo de dados, tamanho e valor
 ```
+---
+---
+## SEMANA 6 - Formulários Web e Processamento HTTP
+
+### Anatomia de um Formulário HTML para BackEnd
+
+Antes do PHP processar qualquer informação, precisamos coletar informações no FrontEnd através de um `<form>`.
+
+**Exemplo de `<form>` em HTML:**
+
+```html
+<form action="processar.php" method="POST">
+    <label>Nome Completo</label>
+    <input type="text" id="campoNome" name="nomeUsuario" placeholder="Digite seu Nome">
+    <button type="submit">Cadastrar</button>
+</form>
+```
+---
+### Os 3 Pilares de um Formulário
+1. **action="processa.php" -> O Destino:** Define qual script PHP no servidor recebrá os dados.
+2. **method="POST" -> O Transporte:** Define a via de protocolo HTTP que será usada (GET ou POST).
+3. **name="nomeUsuario" -> A Etiqueta do Dado:** É o nome da chave que o PHP usará no array associativo ($_POST["nomeUsuario"]).
+
+> **OBS:** Nunca confundir `id` com `name` no input, o PHP ignora o `id`!!
+---
+### O Protocolo HTTP
+Quando o usuário clica no botão `type="submit"`, o navegador compila todas as informações dos campos preenchidos e dispara um pacote de comunicação padronizado pelo **Protocolo HTTP *(Hypertext Transfer Protocol)***.
+
+---
+### Os Formatos de Transferência
+- **Método GET**: Solicitar informações públicas e realizar buscas, mas altamente arriscado para dados privados.
+- **Método POST**: As informações viajam guardadas dentro do protocolo.
+---
+#### Testar o Uso dos Protocolos HTTP
+OK
+
+---
+### GET vs. POST
+
+1. **O Método GET (Consultas e Filtros)**
+
+O  **método `GET`** é utilizado quando a intenção do cliente é **buscar ou filtrar dados** sem alterar o estado do servidor. Os dados enviados via `GET` são anexados diretamente ao final da URL na forma de uma **Query String *(URL)***.
+
+2. **O Método POST (Envio de Cargas Úteis e Mutações)**
+
+O **método `POST`** é utilizado quando o formulário envia dados que devem ser processados para **criar ou modificar registros** no sistema (*ex:* cadastro de usuários, finalizações de compra, upload de arquivos).
+
+### Tabela Comparativa
+![alt text](image.png)
