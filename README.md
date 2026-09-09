@@ -837,6 +837,3 @@ O  **método `GET`** é utilizado quando a intenção do cliente é **buscar ou 
 2. **O Método POST (Envio de Cargas Úteis e Mutações)**
 
 O **método `POST`** é utilizado quando o formulário envia dados que devem ser processados para **criar ou modificar registros** no sistema (*ex:* cadastro de usuários, finalizações de compra, upload de arquivos).
-
-### Tabela Comparativa
-![alt text](image.png)
