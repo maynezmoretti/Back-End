@@ -40,3 +40,55 @@ if ($_SERVER["REQUEST_METHOD"] === "POST"){
         }
     }
 }
+
+?>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Seguro</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef2f7; padding: 30px; }
+        .card { max-width: 420px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        label { display: block; margin-bottom: 6px; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin-bottom: 12px; box-sizing: border-box; }
+        .erro { color: #c0392b; font-size: 0.9em; margin-top: -8px; margin-bottom: 10px; }
+        .sucesso { background: #e7f9ee; color: #1f8a4c; padding: 12px; border-radius: 8px; font-weight: bold; }
+        .alerta { background: #fdecea; color: #b42318; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+    </style>
+
+</head>
+<body>
+
+    <div class="card">
+        <h2>Login do Sistema</h2>
+        <?php if(isset($erros["login"])): ?> 
+            <div class="alerta"><?=  htmlspecialchars($erros["login"], ENT_QUOTES, "UTF-8") ?></div>    
+        <?php endif; ?>
+        
+        <?php if($loginValidado): ?> 
+            <div class="sucesso">Bem-vindo(a), Admin!!!</div>    
+        <?php else: ?>
+            <form method="POST">
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" value="<?= htmlspecialchars($email, ENT_QUOTES, "UTF-8") ?>">
+                <?php if(isset($erros["email"])): ?>
+                    <div class="erro"><?= htmlspecialchars($erros["email"], ENT_QUOTES, "UTF-8") ?></div>
+                <?php endif; ?>
+                
+                <label for="senha">Senha:</label>
+                <input type="password" name="senha" id="senha" value="">
+                <?php if(isset($erros["senha"])): ?>
+                    <div class="erro"><?= htmlspecialchars($erros["senha"], ENT_QUOTES, "UTF-8") ?></div>
+                <?php endif; ?>
+
+                <button type="submit">Entrar</button>
+
+            </form>
+        <?php endif; ?>
+    </div>
+</body>
+</html>
