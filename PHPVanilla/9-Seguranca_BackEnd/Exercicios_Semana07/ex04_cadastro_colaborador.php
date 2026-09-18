@@ -4,10 +4,20 @@ declare(strict_types=1);
 // Parte B: Exercícios Práticos no Laboratório
 // Exercício 4: Sanitizador de Cadastro de Colaboradores
 
-// Remove espaços desnecessários e tags HTML
+// Limpa textos recebidos pelo formulário
 function sanitizarTexto(string $dado): string
 {
     return trim(strip_tags($dado));
+}
+
+// Escapa os dados antes de exibir no HTML
+function e(string $texto): string
+{
+    return htmlspecialchars(
+        $texto,
+        ENT_QUOTES | ENT_SUBSTITUTE,
+        "UTF-8"
+    );
 }
 
 // Valida os dados do colaborador
@@ -15,48 +25,23 @@ function validarColaborador(array $dados): array
 {
     $erros = [];
 
-    // Validação do nome
     if ($dados["nome"] === "") {
         $erros["nome"] = "O nome é obrigatório.";
     }
 
-    // Validação do e-mail
-    if ($dados["email"] === "") {
-
-        $erros["email"] = "O e-mail é obrigatório.";
-
-    } elseif (filter_var($dados["email"], FILTER_VALIDATE_EMAIL) === false) {
-
+    if (filter_var($dados["email"], FILTER_VALIDATE_EMAIL) === false) {
         $erros["email"] = "Digite um e-mail válido.";
     }
 
-    // Validação da matrícula
-    if ($dados["matricula"] === "") {
-
-        $erros["matricula"] = "A matrícula é obrigatória.";
-
-    } elseif (filter_var($dados["matricula"], FILTER_VALIDATE_INT) === false) {
-
+    if (filter_var($dados["matricula"], FILTER_VALIDATE_INT) === false) {
         $erros["matricula"] = "A matrícula deve ser um número inteiro.";
     }
 
-    // Validação do salário
-    if ($dados["salario"] === "") {
-
-        $erros["salario"] = "O salário é obrigatório.";
-
-    } elseif (filter_var($dados["salario"], FILTER_VALIDATE_FLOAT) === false) {
-
+    if (filter_var($dados["salario"], FILTER_VALIDATE_FLOAT) === false) {
         $erros["salario"] = "O salário deve ser um número decimal.";
     }
 
     return $erros;
-}
-
-// Protege os dados na hora de exibir no HTML
-function e(string $texto): string
-{
-    return htmlspecialchars($texto, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
 }
 
 $dados = [
@@ -71,20 +56,18 @@ $cadastroRealizado = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    // Recebe e sanitiza os dados
+    // Recebe e trata os dados
     $dados["nome"] = sanitizarTexto($_POST["nome"] ?? "");
     $dados["email"] = sanitizarTexto($_POST["email"] ?? "");
     $dados["matricula"] = sanitizarTexto($_POST["matricula"] ?? "");
     $dados["salario"] = sanitizarTexto($_POST["salario"] ?? "");
 
-    // Faz as validações
     $erros = validarColaborador($dados);
 
     if (empty($erros)) {
         $cadastroRealizado = true;
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -104,13 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <h2>Erros encontrados:</h2>
 
     <ul>
-
         <?php foreach ($erros as $erro): ?>
-
             <li><?= e($erro) ?></li>
-
         <?php endforeach; ?>
-
     </ul>
 
 <?php endif; ?>

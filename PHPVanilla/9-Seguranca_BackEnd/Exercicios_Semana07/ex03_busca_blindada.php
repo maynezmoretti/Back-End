@@ -4,52 +4,49 @@ declare(strict_types=1);
 // Parte B: Exercícios Práticos no Laboratório
 // Exercício 3: Caixa de Busca com Proteção em Atributos (Reflected XSS)
 
-// Função usada para escapar os dados antes de mostrar na página
+// Função para proteger os dados antes de mostrar no HTML
 function e(string $texto): string
 {
-    return htmlspecialchars($texto, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
+    return htmlspecialchars(
+        $texto,
+        ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5,
+        "UTF-8"
+    );
 }
 
-// Recebe o valor enviado pelo GET
-$busca = $_GET["q"] ?? "";
+// Captura o termo pesquisado pela URL
+$busca = $_GET['q'] ?? '';
 
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <title>Busca de Produtos</title>
+    <title>Busca Blindada</title>
 </head>
-
 <body>
 
-<h1>Busca de Produtos</h1>
+    <h1>Busca de Produtos</h1>
 
-<form method="GET">
+    <form method="GET">
+        <input
+            type="text"
+            name="q"
+            value="<?= e($busca) ?>"
+        >
 
-    <label for="q">Pesquisar:</label>
+        <button type="submit">Buscar</button>
+    </form>
 
-    <input
-        type="text"
-        id="q"
-        name="q"
-        value="<?= e($busca) ?>"
-    >
+    <?php if ($busca !== ''): ?>
 
-    <button type="submit">Buscar</button>
+        <p>
+            Você buscou por:
+            <?= e($busca) ?>
+        </p>
 
-</form>
-
-<?php if ($busca !== ""): ?>
-
-    <p>
-        Você buscou por:
-        <?= e($busca) ?>
-    </p>
-
-<?php endif; ?>
+    <?php endif; ?>
 
 </body>
 </html>

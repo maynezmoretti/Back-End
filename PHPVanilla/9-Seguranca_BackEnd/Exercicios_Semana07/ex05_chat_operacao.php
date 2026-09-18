@@ -4,20 +4,22 @@ declare(strict_types=1);
 // Parte B: Exercícios Práticos no Laboratório
 // Exercício 5: Chat Industrial com Tratamento de Emojis e Quebras de Linha
 
-// Protege os dados antes de exibir no HTML
+// Escapa os dados antes de exibir no HTML
 function e(string $texto): string
 {
-    return htmlspecialchars($texto, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
+    return htmlspecialchars(
+        $texto,
+        ENT_QUOTES | ENT_SUBSTITUTE,
+        "UTF-8"
+    );
 }
 
 $arquivo = "chat.json";
 
-// Cria o arquivo se ele ainda não existir
 if (!file_exists($arquivo)) {
     file_put_contents($arquivo, json_encode([]));
 }
 
-// Lê as mensagens salvas
 $conteudo = file_get_contents($arquivo);
 $mensagens = json_decode($conteudo, true);
 
@@ -35,22 +37,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $operador = trim($_POST["operador"] ?? "");
     $mensagem = trim($_POST["mensagem"] ?? "");
 
-    // Verifica quem está enviando
-    if ($operador === "") {
-        $erros[] = "Selecione quem está enviando a mensagem.";
+    // Verifica o operador
+    if (
+        $operador !== "Operador de Máquina" &&
+        $operador !== "Supervisor"
+    ) {
+        $erros[] = "Selecione um operador válido.";
     }
 
-    // Verifica a mensagem
+    // Verifica o tamanho da mensagem
     if ($mensagem === "") {
-
         $erros[] = "A mensagem é obrigatória.";
-
     } elseif (mb_strlen($mensagem) > 250) {
-
         $erros[] = "A mensagem deve ter no máximo 250 caracteres.";
     }
 
-    // Salva a mensagem
     if (empty($erros)) {
 
         $mensagens[] = [
@@ -72,7 +73,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mensagem = "";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -90,13 +90,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <?php if (!empty($erros)): ?>
 
     <ul>
-
         <?php foreach ($erros as $erro): ?>
-
             <li><?= e($erro) ?></li>
-
         <?php endforeach; ?>
-
     </ul>
 
 <?php endif; ?>
@@ -115,17 +111,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <option value="">Selecione</option>
 
-        <option
-            value="Operador de Máquina"
-            <?= $operador === "Operador de Máquina" ? "selected" : "" ?>
-        >
+        <option value="Operador de Máquina">
             Operador de Máquina
         </option>
 
-        <option
-            value="Supervisor"
-            <?= $operador === "Supervisor" ? "selected" : "" ?>
-        >
+        <option value="Supervisor">
             Supervisor
         </option>
 
@@ -163,13 +153,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <div>
 
-        <strong>
-            <?= e($item["operador"]) ?>:
-        </strong>
+        <strong><?= e($item["operador"]) ?>:</strong>
 
-        <p>
-            <?= nl2br(e($item["mensagem"])) ?>
-        </p>
+        <!--
+        A ordem correta é e() primeiro e nl2br() depois.
+        Se fosse e(nl2br()), a tag <br> seria escapada.
+        -->
+
+        <p><?= nl2br(e($item["mensagem"])) ?></p>
 
     </div>
 
