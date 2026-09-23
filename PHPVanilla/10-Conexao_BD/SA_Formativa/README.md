@@ -64,5 +64,3 @@ VALUES
 ## Passo 4: Criando o Arquivo de Configuração (`config/database.ini`)
 
 Crie o arquivo. Ajuste as chaves de acesso ao banco de dados.
-
-```
