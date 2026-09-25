@@ -1193,7 +1193,7 @@ Se esse arquivo for versionado e enviado para o GitHub:
 2. Robôs maliciosos varrem repositórios à procura de credenciais expostas, para invadir bancos de dados e sequestrar informações *(ataque de Ransomware)*.
 3. A empresa é penalizada por violações da *LGPD (Lei Geral de Proteção de Dados)*.
 ---
-#### **Abordagem segura: usando arquivos de configuração isolada (`.env` / `.ini`)8**
+#### **Abordagem segura: usando arquivos de configuração isolada (`.env` / `.ini`)**
 
 Isolamos as credenciais em um arquivo externo protegido que ***nunca entra no Git***.
 
@@ -1219,7 +1219,7 @@ logs/*.log
 
 Imagina uma aplicação web com 500 usuários acessando simultaneamente. Se cada script, função ou método executar `new PDO()`, ou seja, abrir uma nova conexão, sempre que precisar consultar o banco de dados, teremos milhares de conexão de redes abertas desnecessariamente.
 
-No **SGBD *(PostgresSQL)***, cada conexão aberta cria um processo no sistema operacional dedicado. Abrir conexões repetidas esgota rapidamente o limite configurado (`max_connection`) do BD, gerando um erro:
+No **SGBD *(PostgreSQL)***, cada conexão aberta cria um processo no sistema operacional dedicado. Abrir conexões repetidas esgota rapidamente o limite configurado (`max_connection`) do BD, gerando um erro:
 > `Fatal Error: Sorry, too many clients already`
 ---
 #### **Como o Singleton resolve isso**

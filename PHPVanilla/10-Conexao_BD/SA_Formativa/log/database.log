@@ -1,0 +1,1 @@
+[2026-09-25 13:25:28] ERRO INFRA: Erro no banco de dados: SQLSTATE[08006] [7] connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied
