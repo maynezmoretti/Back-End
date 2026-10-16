@@ -1609,7 +1609,7 @@ Se a pessoa não estiver autenticada ou não tiver o perfil de acesso, ela é ex
 
 ---
 ---
-## SEMANA 11 - Programação Orientada a Objetos em PHP
+## SEMANA 11 - Programação Orientada à Objetos em PHP
 
 - **Tema:** Paradigma de POO, os 4 pilares da OO (Abstração, Encapsulamento, Herança e Polimorfismo), Classes e Instâncias, Construtores, Modificadores de Acesso (`private`, `protected` e `public`) e Modelagem de Dados.
 ---
@@ -1679,8 +1679,233 @@ class ContaBancaria {
     public function getSaldo(): float {
         return $this->saldo;
     }
+} // fecha a classe
+
+// Instanciando dois objetos completamente independentes
+$conta1 = new ContaBancaria("Carlos", 001, 100.00);
+$conta2 = new ContaBancaria("Douglas", 002, 500.00);
+
+echo $conta1->getSaldo(); // exibir 100.00
+echo $conta2->getSaldo(); // exibir 500.00
+```
+> **OBS:** *Alocação de Objetos na Memória*
+
+- No PHP, variáveis que armazenam objetos usam um  **identificador/referência** para o endereço na memória. Quando você passa um objeto para uma função ou método, está passando a referência na memória sobre aquele objeto, o que torna o *POO* extremamente performático.
+
+---
+### Os 4 Pilares da Programação Orientada à Objetos
+
+```mermaid
+quadrantChart
+    x-axis "Conceituação & Estrutura" --> "Comportamentos & Dinâmica"
+    y-axis "Nível Individual" --> "Nível Hierárquico"
+
+    "1. Abstração": [0.25, 0.25]
+    "2. Encapsulamento": [0.25, 0.75]
+    "3. Herança": [0.75, 0.75]
+    "4. Polimorfismo": [0.75, 0.25]
+```
+
+- **Pilar 1: Abstração**
+
+**Definição:** Capacidade de filtrar detalhes irrelevantes e focar estritamente nas características e comportamentos essenciais da entidade para o contexto de software, que está sendo construído.
+
+> ***Exemplo:*** Para um sistema bancário, o que importa em um cliente é seu nome, CPF e renda. Sua altura ou cor favorita são abstrações e podem ser descartadas.
+
+- **Pilar 2: Encapsulamento**
+
+**Definição:** Blindagem dos estados internos do objeto. Os atributos devem ser protegidos contra acessos ou modificações diretas pelo mundo exterior. Alterações no estado só ocorrem através de métodos públicos que validam regras de negócio e mantém invariantes contábeis.
+
+> ***Exemplo:*** Em um sistema bancário, os dados de um cliente, como saldo e senha, devem ser protegidos e acessados apenas por métodos autorizados, garantindo que alterações sejam feitas de forma segura.
+
+- **Pilar 3: Herança**
+
+**Definição:** Mecanismo pelo qual uma classe filha *(subclasse)* herda atributos e comportamentos de uma classe ancestral *(superclasse)*, promovendo o reúso de códigos e estabelecendo uma relação do tipo **É UM**.
+
+> ***Exemplo:*** Um cachorro *(subclasse)* é um mamífero *(superclasse)* -> Porque ele herda características da classe dos mamíferos.
+
+- **Pilar 4: Polimorfismo**
+
+**Definição:** Princípio que permite que classes filhas diferentes respondam a mesma chamada de método, porém, com implementações especializadas e comportamentos distintos. O chamador não precisa saber qual subclasse exata está executando, apenas confia que o método cumpra o contrato.
+
+> ***Exemplo:*** Em um sistema de pagamentos, diferentes formas de pagamento, como pix, cartão de crédito e boleto, podem utilizar o mesmo método de pagamento, mas cada uma executa a operação de uma maneira diferente.
+---
+### Encapsulamento
+
+*Os modificadores de visibilidade:*
+
+| Modificador | Onde pode ser acessado? | Recomendação de Uso |
+| :--- | :--- | :--- |
+| **`private`** | **Apenas** dentro da própria classe que o declarou. Subclasses e scripts externos não conseguem ler nem alterar. | **Padrão ouro para atributos.** Garante proteção absoluta de estado e impede efeitos colaterais. |
+| **`protected`** | Dentro da própria classe e por quaisquer **subclasses que a herdem (`extends`)**. O mundo exterior continua bloqueado. | Usado quando subclasses precisam ler ou ajustar diretamente um valor compartilhado (ex.: `$saldo` em classes filhas de conta). |
+| **`public`** | Acessível livremente por **qualquer parte do sistema**, dentro ou fora da classe. | Usado para os métodos que compõem a **interface pública** do objeto (ações como `sacar()`, `depositar()`, `transferir()`). |
+---
+*Gráfico representativo dos modificadores de acesso em Heranças:*
+
+```mermaid
+flowchart TD
+    subgraph ClassePai ["Classe: ContaBancaria"]
+        priv["private: string $segredo<br/>(Apenas ContaBancaria enxerga)"]
+        prot["protected: float $saldo<br/>(ContaBancaria e filhas enxergam)"]
+        pub["public: function depositar()<br/>(Todo o sistema enxerga)"]
+    end
+
+    subgraph ClasseFilha ["Classe: ContaCorrente (extends ContaBancaria)"]
+        filhaMetodo["function sacar()<br/>• Acessa $saldo (protected) ✔<br/>• NÃO acessa $segredo ❌"]
+    end
+
+    subgraph ScriptExterno ["Arquivo de Rota / Controller Externo"]
+        ext["$conta->depositar(100) ✔<br/>$conta->saldo = 500 ❌ (Fatal Error!)"]
+    end
+
+    ClassePai -->|"Herança"| ClasseFilha
+    ScriptExterno -->|"Interação Pública"| pub
+
+    style priv fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
+    style prot fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+    style pub fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+```
+---
+**Usando *Getters and Setters***
+
+Ao declarar atributos privados ou protegidos (`private` ou `protected`), se você deseja manipulá-los é importante criar os **Modificadores de Acesso** através dos `Getters and Setters`.
+
+***Exemplo:*** Ao criar um atributo `private float $saldo` para modificar os valores ou ler o saldo, é importante criar os métodos públicos.
+
+- `public function getSaldo()`: Permite consultar o valor do saldo.
+- `public function getSaldo()`: Permite alterar o valor do saldo.
+
+> **Cuidado!**
+**Não destrua seu encapsulamento**: Para atributos que não serão modificados, como CPF, por exemplo, não há necessidade de criar um `setCPF()`; O CPF de uma pessoa não será modificado ao longo da vida.
+
+---
+### Herança, Classes Abstratas e Polimorfismo
+
+- **Classe Abstrata:** Uma *Classe Abstrata* é uma superclasse conceitual que **não pode ser instanciada diretamente com `new`**. Ela serve como matriz para que subclasses concretas sejam derivadas.
+
+```php
+abstract class ContaBancaria {
+    // superclasse -> passa informações para as subclasses (herança) 
+    protected float $saldo;
+    // construtor
+    public function __construct(float $saldoInicial) {
+        $this->saldo = $saldoInicial;
+    }
+    // métodos de acesso (getters and setters)
+    public function getSaldo(): float {
+        return $this->saldo;
+    }
+    // método abstrato: obriga as subclasses a criarem, porém não vai fornecer a implementação do método (polimorfismo)
+    abstract public function sacar(float $valor): void;
 }
 
-// Instanciando dois objetos completamentes independentes
-
+// se um objeto da classe ContaBancaria tentar ser instanciado, vai gerar um erro na compilação
+$conta = new ContaBancaria(100); // error: cannot instantiate abstract class ContaBancaria
+// OBS: não pode instanciar OBJ da classe abstrata
 ```
+---
+- **Herança**: Usar o mecanismo de criação de subclasse a partir da superclasse *(extends)*.
+
+```php
+class ContaCorrente extends ContaBancaria {
+    // não precisa redeclarar os atributos e métodos já criados na superclasse
+    // a única coisa que preciso implementar é o método sacar
+    public function sacar(float $valor): void {
+        // implemetar a lógica de negócio para ContaCorrente
+        $this->saldo -= $valor + 2.50; // taxa de saque de 2.50
+    }
+}
+
+class ContaPoupanca extends ContaBancaria {
+    // outro método para sacar
+    public function sacar(float $valor): void {
+        // implementar a lógica de negócio para ContaPoupanca
+        if($valor <= $this->saldo) {
+            $this->saldo -= $valor; // não tem taxa
+        } else {
+            echo "Não é possível sacar esse valor!";
+        }
+    }
+}
+
+$contaCorrente = new ContaCorrente(1000.00);
+$contaPoupanca = new ContaPoupanca(500.00);
+
+$contaCorrente->sacar(100.00); // deduz R$ 102.50
+$contaPoupanca->sacar(100.00); // deduz R$100.00
+
+$contaCorrente->getSaldo(); // retorna R$897.50
+$contaPoupanca->getSaldo(); // retorna R$400.00
+```
+
+> **OBS:** Ambas as classes implementam o método `sacar()` de maneiras diferentes, respeitando as regras de negócio específicas de cada tipo de conta.
+---
+- **Polimorfismo:** O método `sacar()` na classe ContaBancaria demonstra o polimorfismo em ação.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cliente as Script / Controller
+    participant CC as Conta Origem (ContaCorrente)
+    participant CP as Conta Destino (ContaPoupanca)
+
+    Cliente->>CC: transferir(200.00, $CP)
+    Note over CC: CC executa seu próprio método sacar():<br/>Valida saldo + limite e cobra taxa de R$ 2,50!
+    CC->>CC: sacar(200.00) (Deduz R$ 202,50 do saldo)
+    CC->>CP: depositar(200.00)
+    Note over CP: CP credita R$ 200,00 no seu saldo
+    CC-->>Cliente: Transferência concluída automaticamente!
+```
+---
+### Técnicas e Tratamento de Exceções
+
+**Constructor Property Promotion (Declaração no Constructor)**
+
+No PHP 8.X podemos utilizar recursos modernos que reduzem o código repetitivo e elevam a segurança. O uso do `Property Promotion` no construtor é um exemplo, não precisamos declarar os atributos e depois fazer o construtor, basta declarar os atributos diretamente dentro do construtor.
+
+```php
+class TitularProperty {
+    public function __construct (
+        private string $nome;
+        private string $cpf;
+    )
+}
+
+// isso é igual
+
+class TitularSemProperty {
+    private string $nome;
+    private string $cpf;
+
+    public function __construct(string $nome, string $cpf) {
+        $this->nome = $nome;
+        $this->cpf = $cpf;
+    }
+}
+```
+---
+**Exceções de Domínio: Tratamento de Erros do Sistema**
+
+Um dos maiores erros cometidos em sistemas procedurais é o retorno mágico de valores como `-1`, `false` ou `null` quando uma regra de negócio é violada.
+
+***Para corrigir esses erros mágicos*** devemos usar `throw Exception`.
+
+Se o método retornar `false` quando ocorrer um erro, o desenvolvedor não fez o tratamento de erros corretamente.
+
+- ***Exemplo:*** Se o `sacar()` retornar `false` quando não houver saldo, o sistema continuará executando como se o dinheiro tivesse saído, causando furos de caixa no sistema. Já quando usamos uma **Exceção de Domínio**, a execução é interrompida e é feito um tratamento usando um bloco `try/catch`.
+
+```mermaid
+flowchart TD
+    op["Operação: $conta->sacar(5000.00)"] --> check{"Saldo suficiente?"}
+    check -- Sim --> ok["Deduz saldo e prossegue normalmente"]
+    check -- Não --> erro["throw new SaldoInsuficienteException(...)"]
+    
+    erro --> intercept["Interrompe execução imediata!"]
+    intercept --> catchBlock["try { ... } catch (SaldoInsuficienteException $e) {<br/>    // Captura segura e mensagem amigável para o usuário<br/>}"]
+
+    style ok fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style erro fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
+    style catchBlock fill:#e0e7ff,stroke:#4338ca,stroke-width:2px,color:#312e81
+```
+
+>**OBS:** `try/catch` é o mecanismo de captura de exceções do PHP. Ele permite que você trate erros de forma inteligente, mantendo a integridade do sistema e fornecendo feedback claro ao usuário.
