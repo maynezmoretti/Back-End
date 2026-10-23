@@ -1,4 +1,4 @@
-# Situação de Aprendizagem - Programação Orientada à Objetos (POO) - SENAI Bank
+# Situação de Aprendizagem - Programação Orientada a Objetos (POO) - SENAI Bank
 
 ## Estrutura de Diretórios do Projeto
 

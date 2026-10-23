@@ -1609,7 +1609,7 @@ Se a pessoa não estiver autenticada ou não tiver o perfil de acesso, ela é ex
 
 ---
 ---
-## SEMANA 11 - Programação Orientada à Objetos em PHP
+## SEMANA 11 - Programação Orientada a Objetos em PHP
 
 - **Tema:** Paradigma de POO, os 4 pilares da OO (Abstração, Encapsulamento, Herança e Polimorfismo), Classes e Instâncias, Construtores, Modificadores de Acesso (`private`, `protected` e `public`) e Modelagem de Dados.
 ---
@@ -1623,7 +1623,7 @@ Na Programação Procedural, a manipulação de variáveis, os laços de repeti�
 - **2. As regras de validação ficam dispersas:** Cada tela precisa checar uma função, gerando dezenas de `if/else` duplicados espelhados pelo código. Se uma regra mudar, o desenvolvedor precisa lembrar de atualizar todos os arquivos do sistema.
 - **3. Não há garantia de invariantes:** É impossível garantir que um dado sempre permaneça em estado consistente.
 ---
-**O que é Paradigma de Programação Orientado à Objetos (POO)?**
+**O que é Paradigma de Programação Orientado a Objetos (POO)?**
 
 Na **POO**, em vez de separar funções de um lado e dados soltos de outro, nós unimos *dados (atributos)* e as *funções que manipulam esses dados (métodos)* dentro de uma única estrutura chamada ***Objeto***.
 
@@ -1693,7 +1693,7 @@ echo $conta2->getSaldo(); // exibir 500.00
 - No PHP, variáveis que armazenam objetos usam um  **identificador/referência** para o endereço na memória. Quando você passa um objeto para uma função ou método, está passando a referência na memória sobre aquele objeto, o que torna o *POO* extremamente performático.
 
 ---
-### Os 4 Pilares da Programação Orientada à Objetos
+### Os 4 Pilares da Programação Orientada a Objetos
 
 ```mermaid
 quadrantChart
@@ -1911,4 +1911,202 @@ flowchart TD
 >**OBS:** `try/catch` é o mecanismo de captura de exceções do PHP. Ele permite que você trate erros de forma inteligente, mantendo a integridade do sistema e fornecendo feedback claro ao usuário.
 ---
 ---
-## SEMANA 12 - 
+## SEMANA 12 - Arquitetura MVC Artesanal
+
+- **Tema:** Padrão Arquitetural MVC (Model-View-Controller) no Back-End, Gestão de Dependências com Composer, Especificações de Autoloading PSR-4, Resolução Automática de Namespaces, Padrão Front Controller, Roteador HTTP Artesanal e Injeção de Dados nas Views.
+---
+### O Fim do Código Espaguete
+
+Quando encontramos um padrão de código desastroso e caótico, sem arquiteturas modernas de desenvolvimento, usamos o termo `código espaguete`.
+
+> **Exemplo de Código Espaguete:**
+
+```php
+<!-- ARQUIVO LEGADO: produtos.php (O PESADELO DO CÓDIGO ESPAGUETE) -->
+<?php
+// 1. Múltiplos includes manuais frágeis
+require_once __DIR__ . '/../config/conexao.php';
+require_once __DIR__ . '/../classes/Produto.php';
+require_once __DIR__ . '/../classes/Sessao.php';
+require_once __DIR__ . '/../classes/Auditoria.php';
+
+// 2. Mistura de lógica de banco e processamento HTTP
+$pdo = Conexao::getInstancia();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome = $_POST['nome'];
+    $stmt = $pdo->prepare("INSERT INTO produtos (nome) VALUES (?)");
+    $stmt->execute([$nome]);
+}
+$produtos = $pdo->query("SELECT * FROM produtos")->fetchAll();
+?>
+
+<!-- 3. HTML misturado com PHP procedural na mesma folha -->
+<html>
+<body>
+    <h1>Catálogo</h1>
+    <?php foreach($produtos as $p): ?>
+        <p><?= $p['nome'] ?></p>
+    <?php endforeach; ?>
+</body>
+</html>
+```
+---
+**Os Problemas Críticos do *Código Espaguete***
+
+1. **Acoplamento Máximo:** Se você mudar o layout visual, corre o risco de quebrar uma query SQL. Se alterar uma coluna do banco, precisa reescrever o arquivo visual.
+2. **Fragilidade de Inclusões (`required_once`):** Se um arquivo for movido de pasta, todas as chamadas `required_once` quebram com erros fatais de arquivos não encontrados.
+3. **Exposição de Segurança:** Se os arquivos PHP estiverem na raiz acessível do servidor web, qualquer usuário malicioso pode tentar acessar scripts internos digitando `http://site.com/config/conexao.php`.
+
+```mermaid
+flowchart
+    subgraph Caótico ["Código Espaguete Tradicional (Desorganizado)"]
+            arq["produtos.php<br/> Consultas SQL Diretas<br/> HTML e Tags CSS<br/> Regras de Negócio<br/> 10x Require_once manuais"]
+    end
+
+    style Caótico fill: #fee2e2, stroke: #dc2626, stroke-width: 2px, color: #7f1d1d
+```
+---
+### A Tríade Model-View-Controller (MVC) no Back-End
+
+O Padrão **MVC *(Model-View-Controller)*** é a arquitetura de software corporativa mais consagrada da história da web. Seu objetivo é separar as preocupações do sistema em **3 camadas bem definidas**:
+
+```mermaid
+flowchart TD
+    subgraph MVC ["Padrão Arquitetural MVC (Responsabilidade Única)"]
+        controller["Controller<br/>(Maestro do Fluxo)"]
+        model["Model<br/>(Regras de Negócio & Banco)"]
+        view["View<br/>(Apresentação Visual Limpa)"]
+
+        controller -->|"1. Pede dados"| model
+        model -->|"2. Devolve entidades"| controller
+        controller -->|"3. Injeta dados"| view
+    end
+
+    style controller fill:#e0e7ff,stroke:#4338ca,stroke-width:2px,color:#312e81
+    style model fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#14532d
+    style view fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cliente as Navegador do Usuário
+    participant FC as Front Controller (index.php)
+    participant Router as Roteador HTTP
+    participant Ctrl as ProdutoController
+    participant Model as Produto (Model)
+    participant BD as Banco de Dados (PostgreSQL)
+    participant View as View (listar.php)
+
+    Cliente->>FC: GET /produtos
+    FC->>Router: despachar("GET", "/produtos")
+    Router->>Ctrl: executar listar()
+    Ctrl->>Model: listarTodos()
+    Model->>BD: SELECT * FROM produtos...
+    BD-->>Model: Retorna registros relacionais
+    Model-->>Ctrl: Retorna array de entidades
+    Ctrl->>View: renderizar("produtos/listar", dados)
+    View-->>Cliente: Retorna HTML estruturado e sanitizado
+```
+
+1. **Model (Camada de Modelo de Negócio e Dados)**
+- ***O que faz:*** Representa as entidades do mundo real e gerencia a lógica de dados, persistência e regras de negócio.
+- ***O que sabe:*** Sabe como conectar ao banco de dados, executar Prepared Statement, validar se um preço é positivo (RN) e calcular totais de estoque (RN).
+- ***O que NUNCA faz:*** Nunca emite comando `echo`, nunca gera tag HTML e nunca lê dados da superglobal `$_POST` ou `$_GET`.
+
+2. **View (Camada de Visualização e Apresentação)**
+- ***O que faz:*** Renderiza a interface gráfica do usuário (geralmente HTML, CSS, JSON).
+- ***O que sabe:*** Recebe variáveis simples enviadas pelo Controller e as formata visualmente, aplicando sanitização ativa contra XSS (`htmlspecialchars`).
+- ***O que NUNCA faz:*** Nunca executa consultas SQL, nunca faz regras de negócio complexas e nunca redireciona requisições via `header()`.
+
+3. **Controller (Camada de Controle e Orquestração)**
+- ***O que faz:*** Atua como o maestro da aplicação. Recebe a requisição do usuário, valida as entradas, aciona a camada Model para obter ou persistir informações e seleciona a View correspondente para renderizar a resposta.
+- ***O que sabe:*** Sabe qual Model chamar e qual View devolver.
+- ***O que NUNCA faz:*** Não deve conter regras contábeis complexas (elas pertencem ao Model) e não deve escrever HTML diretamente.
+---
+### O Gerenciador Composer e o AutoLoad PSR-4
+
+Imagine um projeto corporativo moderno com mais de 300 classes e ter que escrever 300 linhas de `required_once` em cada arquivo. Isso tornaria o desenvolvimento inviável.
+
+É aqui que entra o **Composer** e a especificação **PSR-4**.
+
+```mermaid
+flowchart LR
+    comp["Composer<br/>(composer.json)"] -->|"composer dump-autoload"| auto["vendor/autoload.php"]
+    
+    codigo["use App\\Models\\Produto;<br/>$p = new Produto();"] -->|"PHP intercepta a chamada"| auto
+    auto -->|"Mapeia 'App\\' para 'src/'"| disco["Carrega do disco:<br/>src/Models/Produto.php"]
+
+    style comp fill:#fed7aa,stroke:#ea580c,stroke-width:2px,color:#7c2d12
+    style auto fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style disco fill:#e0e7ff,stroke:#4338ca,stroke-width:2px,color:#312e81
+```
+---
+**O que é o Composer?**
+
+O **Composer** é o gerenciador de dependências oficial da linguagem PHP. Ele desempenha duas funções vitais:
+
+1. Baixar bibliotecas de terceiros a partir do repositório central Packagist (como bibliotecas de envio de e-mails, geradores de PDF e frameworks).
+2. **Gerar o Autoloader Automático:** O Composer lê as classes criadas por você no seu projeto e as disponibiliza automaticamente no código sem a necessidade de nenhum `require`.
+---
+**As Especificações do PSR-4 (PHP Standart Recommendation 4):**
+
+A especificação internacional **PSR-4** dita que:
+> *O namespace de uma classe deve espelhar exatamente a estrutura de diretórios no disco físico onde o arquivo está gravado.*
+
+***Exemplo prático:***
+
+- Ao declararmos o namespace: `namespace App\Controllers; class ProdutoController {}` e configurarmos o Composer para que o prefixo `App\\` corresponda à pasta `src/`, o autoloading PSR-4 permitirá que o PHP localize automaticamente o arquivo em: `src/Controllers/ProdutoController.php`.
+---
+**Como configurar o `composer.json`**:
+
+```json
+{
+    "name": "senai/supply-mvc",
+    "description": "Sistema de Gestão de Insumos Industriais",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
+```
+
+> **IMPORTANTE:**
+
+> **Comando Mandatório de Regeneração:**  
+> Sempre que você criar o arquivo `composer.json` ou alterar a estrutura de namespaces, execute no terminal do VS Code: `composer dump-autoload -o`. O parâmetro `-o` gera o mapa de classes otimizado para máxima performance.
+---
+### O Padrão Front Controller e Roteamento HTTP
+
+Em aplicações PHP procedurais antigas, a URL do navegador correspondia exatamente a um arquivo gravado no disco:
+- `http://site.com/contato.php` ➔ Carrega o arquivo `contato.php`.
+- `http://site.com/admin/relatorio.php` ➔ Carrega o arquivo `admin/relatorio.php`.
+
+Em arquiteturas corporativas modernas (incluindo **Laravel**, **Symfony** e **Spring Boot**), essa correspondência direta não existe mais. Em vez disso, utilizamos o **Padrão Front Controller**.
+
+```mermaid
+flowchart TD
+    req1["GET /"] --> fc["Ponto Único de Entrada:<br/>public/index.php"]
+    req2["GET /produtos"] --> fc
+    req3["POST /produtos/salvar"] --> fc
+
+    fc --> router["Roteador Artesanal<br/>(App\\Core\\Roteador)"]
+
+    router -->|"Combina Rota"| c1["HomeController::index()"]
+    router -->|"Combina Rota"| c2["ProdutoController::listar()"]
+    router -->|"Combina Rota"| c3["ProdutoController::salvar()"]
+    router -.->|"Não encontra"| c4["HTTP 404 Not Found"]
+
+    style fc fill:#fed7aa,stroke:#ea580c,stroke-width:2px,color:#7c2d12
+    style router fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style c4 fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
+```
+---
+**Por que isolar o diretório `public/`?**
+
+Por razões estritas de **Segurança da Informação**:
+1. O servidor web aponta sua raiz estritamente para a pasta `public/`.
+2. As pastas `src/`, `config/`, `vendor/` e os arquivos `.ini` e `.env` ficam **um nível acima da raiz pública**.
+3. Mesmo que um atacante tente digitar diretamente a URL de um arquivo sensível (ex.: `http://site.com/config/database.ini`), o servidor web bloqueia o acesso, pois o arquivo não reside na pasta pública.
