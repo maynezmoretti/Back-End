@@ -1,57 +1,49 @@
 <?php
 declare(strict_types=1);
 
-// Abre a conexão com o PostgreSQL.
-function conectarBanco(): PDO
-{
-    $config = parse_ini_file(__DIR__ . '/database.ini', true);
+// Abre a conexão com o banco de dados
+function conectar(): PDO {
+    return new PDO(
+        "pgsql:host=localhost;dbname=almoxarifado_senai",
+        "postgres",
+        "postgres"
+    );
+}
 
-    if ($config === false || !isset($config['development'])) {
-        throw new RuntimeException('Configuração não encontrada.');
+// Realiza uma busca vulnerável usando o termo diretamente no SQL
+function buscarVulneravel(string $termo): void {
+    $pdo = conectar();
+    $sql = "SELECT * FROM usuarios WHERE nome = '$termo'";
+
+    echo "\nBusca vulnerável:\n";
+    $stmt = $pdo->query($sql);
+
+    // Exibe os nomes dos registros encontrados
+    while ($resultado = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "Registro encontrado: " . $resultado['nome'] . "\n";
     }
-
-    $db = $config['development'];
-    $dsn = "pgsql:host={$db['db_host']};port={$db['db_port']};dbname={$db['db_name']}";
-
-    return new PDO($dsn, $db['db_user'], $db['db_password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
 }
 
-// Demonstra uma consulta vulnerável à injeção de SQL.
-function buscarVulneravel(string $termo): void
-{
-    $pdo = conectarBanco();
-    $sql = "SELECT id, descricao FROM pecas_industriais
-            WHERE descricao = '$termo'";
+// Realiza uma busca segura usando parâmetro preparado
+function buscarProtegido(string $termo): void {
+    $pdo = conectar();
+    $sql = "SELECT * FROM usuarios WHERE nome = :nome";
 
-    echo "\nConsulta vulnerável:\n$sql\n";
-    $resultado = $pdo->query($sql);
-    echo "Registros encontrados: " . $resultado->rowCount() . "\n";
-}
-
-// Pesquisa com parâmetro nomeado e consulta preparada.
-function buscarProtegido(string $termo): void
-{
-    $pdo = conectarBanco();
-    $sql = 'SELECT id, descricao FROM pecas_industriais
-            WHERE descricao = :termo';
+    echo "\nBusca protegida:\n";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([':termo' => $termo]);
+    $stmt->execute(['nome' => $termo]);
 
-    echo "\nConsulta protegida:\n";
-    echo "Registros encontrados: " . count($stmt->fetchAll()) . "\n";
+    // Verifica se algum registro corresponde à busca
+    if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "Registro encontrado.\n";
+    } else {
+        echo "Nenhum registro encontrado.\n";
+    }
 }
 
-// Compara os dois comportamentos com um texto de teste.
-try {
-    $termo = "' OR '1'='1";
+// Define o termo utilizado para testar as duas buscas
+$termo = "' OR '1'='1";
 
-    echo "=== TESTE VULNERÁVEL ===\n";
-    buscarVulneravel($termo);
-
-    echo "\n=== TESTE PROTEGIDO ===\n";
-    buscarProtegido($termo);
-} catch (PDOException $erro) {
-    echo "Erro durante o teste de SQL Injection.\n";
-}
+// Executa a busca vulnerável e a busca protegida
+buscarVulneravel($termo);
+buscarProtegido($termo);

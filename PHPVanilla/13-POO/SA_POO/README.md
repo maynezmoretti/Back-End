@@ -25,3 +25,5 @@ SA_POO/
 ### Conta Exception (`src/Exceptions/ContaException.php`)
 ---
 ## Entidade de Titularidade (`src/Dominio/Titular.php`)
+---
+## SuperClasse chamada ContaBancaria -> Abstrata

@@ -1,54 +1,76 @@
 <?php
 declare(strict_types=1);
 
-// Conecta ao PostgreSQL usando a configuração do projeto.
-function conectarBanco(): PDO
+// Evita que caracteres especiais sejam interpretados como HTML
+function e(string $valor): string
 {
-    $config = parse_ini_file(__DIR__ . '/database.ini', true);
-
-    if ($config === false || !isset($config['development'])) {
-        throw new RuntimeException('Configuração não encontrada.');
-    }
-
-    $db = $config['development'];
-    $dsn = "pgsql:host={$db['db_host']};port={$db['db_port']};dbname={$db['db_name']}";
-
-    return new PDO($dsn, $db['db_user'], $db['db_password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
+    return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
 }
 
-// Retorna o número da página, sem aceitar valores menores que um.
-function obterPagina(): int
-{
-    $pagina = filter_var($_GET['p'] ?? 1, FILTER_VALIDATE_INT);
-    return ($pagina !== false && $pagina > 0) ? $pagina : 1;
+// Estabelece a conexão com o banco de dados
+$pdo = new PDO(
+    "pgsql:host=localhost;dbname=almoxarifado_senai",
+    "postgres",
+    "postgres"
+);
+
+// Recebe o número da página pela URL
+$pagina = (int) ($_GET['p'] ?? 1);
+
+// Impede que o número da página seja menor que 1
+if ($pagina < 1) {
+    $pagina = 1;
 }
 
-// Busca cinco peças de acordo com a página escolhida.
-function listarPagina(PDO $pdo, int $pagina): void
-{
-    $offset = ($pagina - 1) * 5;
-    $sql = 'SELECT id, codigo_sku, descricao, quantidade
-            FROM pecas_industriais
-            ORDER BY id
-            LIMIT :limite OFFSET :offset';
+// Define a partir de qual registro a consulta começa
+$offset = ($pagina - 1) * 5;
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(':limite', 5, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->execute();
+// Busca as peças de acordo com a página selecionada
+$sql = "SELECT * FROM pecas_industriais
+        ORDER BY id
+        LIMIT :limite OFFSET :offset";
 
-    foreach ($stmt->fetchAll() as $peca) {
-        echo "{$peca['codigo_sku']} - {$peca['descricao']} ";
-        echo "- Quantidade: {$peca['quantidade']}\n";
-    }
+$stmt = $pdo->prepare($sql);
+
+// Define os valores dos parâmetros como números inteiros
+$stmt->bindValue(':limite', 5, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+$stmt->execute();
+
+// Exibe o título do catálogo
+echo "<h1>Catálogo de peças industriais</h1>";
+
+// Apresenta os dados de cada peça encontrada
+while ($peca = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    echo "ID: " . e((string) $peca['id']) . "<br>";
+    echo "Código SKU: " . e((string) $peca['codigo_sku']) . "<br>";
+    echo "Descrição: " . e((string) $peca['descricao']) . "<br>";
+    echo "Categoria: " . e((string) $peca['categoria']) . "<br>";
+    echo "<hr>";
 }
 
-// Executa a paginação e trata possíveis erros.
-try {
-    listarPagina(conectarBanco(), obterPagina());
-} catch (PDOException $erro) {
-    echo "Erro ao consultar o catálogo.\n";
-}
+// Cria um link para acessar a próxima página
+echo '<a href="?p=' . ($pagina + 1) . '">Próxima página</a>';
+?>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Peças</title>
+</head>
+<body>
+
+    <!-- Formulário para selecionar a página do catálogo -->
+    <h1>Catálogo de Peças Industriais</h1>
+
+    <form action="ex03_catalogo_paginado.php" method="GET">
+        <label for="p">Número da página:</label>
+        <input type="number" id="p" name="p" min="1" value="1" required>
+
+        <button type="submit">Consultar peças</button>
+    </form>
+
+</body>
+</html>

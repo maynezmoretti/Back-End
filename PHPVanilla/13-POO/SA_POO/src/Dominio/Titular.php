@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use InvalidArgumentException; // biblioteca da exception para InvalidArgument
-
 // classe para representar o titular da conta bancária
 
 final class Titular {
@@ -18,7 +16,7 @@ final class Titular {
 
     // validar dados de forma privada
     private function validarDados(): void {
-        if(strlen(trim($this->nome)) > 3) {
+        if(strlen(trim($this->nome)) < 3) {
             throw new InvalidArgumentException("O nome do titular deve possuir no mínimo 3 caracteres");
         }
 

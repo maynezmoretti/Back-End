@@ -1,87 +1,81 @@
 <?php
 declare(strict_types=1);
 
-// Conecta ao banco de dados.
-function conectarBanco(): PDO
+// Classe responsável pelas movimentações do estoque
+final class ex04_movimentacao_estoque
 {
-    $config = parse_ini_file(__DIR__ . '/database.ini', true);
+    // Armazena a conexão com o banco de dados
+    private PDO $pdo;
 
-    if ($config === false || !isset($config['development'])) {
-        throw new RuntimeException('Configuração não encontrada.');
-    }
-
-    $db = $config['development'];
-    $dsn = "pgsql:host={$db['db_host']};port={$db['db_port']};dbname={$db['db_name']}";
-
-    return new PDO($dsn, $db['db_user'], $db['db_password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-}
-
-// Controla as movimentações de entrada e saída do estoque.
-final class PecaDAO
-{
-    public function __construct(private PDO $pdo)
+    // Recebe a conexão ao criar o objeto
+    public function __construct(PDO $pdo)
     {
+        $this->pdo = $pdo;
     }
 
-    // Registra uma movimentação de forma atômica.
+    // Consulta a quantidade disponível da peça
+    private function buscarSaldo(int $pecaId): ?int
+    {
+        $sql = "SELECT quantidade FROM pecas_industriais
+                WHERE id = :id FOR UPDATE";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $pecaId]);
+        $peca = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $peca ? (int) $peca['quantidade'] : null;
+    }
+
+    // Altera a quantidade da peça no estoque
+    private function atualizarSaldo(int $pecaId, int $saldo): void
+    {
+        $sql = "UPDATE pecas_industriais
+                SET quantidade = :quantidade WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'quantidade' => $saldo,
+            'id' => $pecaId
+        ]);
+    }
+
+    // Processa uma entrada ou saída de peças
     public function registrarMovimentacao(
         int $pecaId,
         int $quantidade,
         string $tipo
     ): bool {
-        if ($pecaId <= 0 || $quantidade <= 0 ||
-            !in_array($tipo, ['entrada', 'saida'], true)) {
+        if ($quantidade <= 0 ||
+            ($tipo !== 'entrada' && $tipo !== 'saida')) {
             return false;
         }
 
+        $this->pdo->beginTransaction();
+
         try {
-            $this->pdo->beginTransaction();
+            $saldo = $this->buscarSaldo($pecaId);
 
-            $sql = 'SELECT quantidade FROM pecas_industriais
-                    WHERE id = :id FOR UPDATE';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([':id' => $pecaId]);
-            $peca = $stmt->fetch();
-
-            if (!$peca) {
+            // Cancela a operação se a peça não existir ou faltar estoque
+            if ($saldo === null ||
+                ($tipo === 'saida' && $saldo < $quantidade)) {
                 $this->pdo->rollBack();
                 return false;
             }
 
-            $saldo = (int) $peca['quantidade'];
+            // Calcula o novo saldo conforme o tipo de movimentação
             $novoSaldo = $tipo === 'entrada'
                 ? $saldo + $quantidade
                 : $saldo - $quantidade;
 
-            if ($novoSaldo < 0) {
-                $this->pdo->rollBack();
-                return false;
-            }
-
-            $sql = 'UPDATE pecas_industriais SET quantidade = :saldo
-                    WHERE id = :id';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([':saldo' => $novoSaldo, ':id' => $pecaId]);
-
+            // Salva a alteração e confirma a transação
+            $this->atualizarSaldo($pecaId, $novoSaldo);
             $this->pdo->commit();
+
             return true;
-        } catch (Throwable $erro) {
+        } catch (PDOException $e) {
+            // Desfaz a operação caso ocorra algum erro
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
             return false;
         }
     }
-}
-
-// Exemplo de movimentação para testar o método.
-try {
-    $dao = new PecaDAO(conectarBanco());
-    $sucesso = $dao->registrarMovimentacao(1, 2, 'entrada');
-    echo $sucesso ? "Movimentação registrada.\n" : "Movimentação não realizada.\n";
-} catch (Throwable $erro) {
-    echo "Não foi possível acessar o banco.\n";
 }
