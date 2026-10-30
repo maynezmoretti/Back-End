@@ -161,6 +161,5 @@ Criar a Classe Singleton de Conexão com o Banco de Dados (`src/Core/ConexaoBanc
 
 ### Criação dos Models
 
-
 ### Criação dos Constrollers
-- Criar Classe abstrata Constroller -> vai servir de base para todos os controllers do sistema.
+- Criar Classe Abstrata Controller -> Vai servir de base para todos os controllers do sistema.
