@@ -42,6 +42,7 @@ final class ProdutoController extends Controller {
             Logger::info("Novo insumo cadastrado no almoxarifado", ['nome' => $nome, 'categoria' => $cat]);
             $this->redirecionar('/produtos');
         }
+        // Se tentar cadastrar falando informações, manda uma mensagem de aviso para o usuário
         $this->renderizar('produtos/criar', [
             'titulo'    => 'Novo Insumo',
             'erro'      => 'Preencha todos os campos corretamente.',
