@@ -27,7 +27,7 @@ cd nome-do-projeto
 
 ---
 
-## Criação de uma Classe Model
+## 3. Criação de uma Classe Model
 
 - Gerar o Model para representar as máquinas e equipamentos do sistema.
 
@@ -37,7 +37,7 @@ cd nome-do-projeto
 
 ---
 
-## 3. Criação de um Controller
+## 4. Criação de um Controller
 
 - Gerar um Controller para gerenciar as máquinas e equipamentos (Ativo) -> `php artisan make:controller AtivoController --resource`.
 
@@ -45,13 +45,13 @@ cd nome-do-projeto
 
 ---
 
-## 4. Rotas de Navegação da Aplicação
+## 5. Rotas de Navegação da Aplicação
 
 `routes/web.php` -> criação de duas rotas de tipo get (uma de ativos mokados e outra de status da infra).
 
 ---
 
-## 5. Camada de Visualização `Blade`
+## 6. Camada de Visualização `Blade`
 
 - `resources/views/` -> criação da pasta de ativos e criação do `index.blade.php`.
 
@@ -63,7 +63,7 @@ cd nome-do-projeto
 
 ---
 
-## Inicialização e Homologação
+## 7. Inicialização e Homologação
 
 - Inspecionar -> `php artisan about`.
 
@@ -73,7 +73,7 @@ cd nome-do-projeto
 
 ---
 
-## 7. Roteiro de Homologação e Teste
+## 8. Roteiro de Homologação e Teste
 
 Execute a sequência de 7 testes de validação técnica no laboratório:
 
@@ -129,3 +129,23 @@ Execute a sequência de 7 testes de validação técnica no laboratório:
 7. **Teste 7 — Verificação do Painel de Saúde (`php artisan about`):**  
    Execute `php artisan about` no terminal.  
    *Resultado Esperado:* Todos os indicadores técnicos devem estar validados em verde.
+
+---
+
+# Construção da Gestão de Parceiros Industriais (Módulo Cliente)
+
+## 1. Criação do Model e Migrações do Banco de Dados
+
+Crie o model e o arquivo de migração para a tabela `clientes`:
+
+> `php artisan make:model Cliente -m`
+
+- `-m` -> diretamente relaciada a migração do banco de dados.
+
+---
+
+## 2. Gerar e Implementar `ClienteController`
+
+> `php artisan make:controller ClienteController --resource`
+
+O arquivo é criado em `app/Http/Controllers/ClienteController.php`.
