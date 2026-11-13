@@ -2582,13 +2582,13 @@ O ataque CSRF ocorre quando um site malicioso força o navegador de um usuário 
 </form>
 ```
 ---
-**Simulação do método em formulários (Method Spooting)**
+**Simulação do método em formulários (Method Spoofing)**
 
 A especificação do HTML5 possui uma limitação histórica conhecida: *formulários HTML suportam nativamente apenas o método `GET` e `POST` no atributo `method=`*.
 
 ***Como enviar requisições `PUT` para atualizar ou `DELETE` para excluir dados através de formulários web padrão?***
 
-O Laravel resolve isso através da técnica de **Method Spooting**, que define como `method="POST"` e injeta o campo oculto `_method` através da diretiva Blade `@method("verbo")`.
+O Laravel resolve isso através da técnica de **Method Spoofing**, que define como `method="POST"` e injeta o campo oculto `_method` através da diretiva Blade `@method("verbo")`.
 
 > **Exemplos Práticos:**
 
