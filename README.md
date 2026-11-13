@@ -2676,7 +2676,7 @@ flowchart TD
     style Caotico fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
     style Blade fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
 ```
-
+---
 ### 2. A Compilação do Blade
 
 O **Blade** é o motor de templates nativo e exclusivo do framework Laravel. Oferecendo uma sintaxe expressiva, limpa e extremamente produtiva para construção de interfaces visuais.
@@ -2688,7 +2688,6 @@ O **Blade** é o motor de templates nativo e exclusivo do framework Laravel. Ofe
 3. O Blade compila as diretivas (`@if`, `@forelse`, `{{}}`), convertendo em **código PHP puro e otimizado** sem a necessidade de usar Tag `<?php >`.
 4. O resultado compilado é gravado em cache no disco em `storage/framework/views/`.
 5. Nas requisições seguintes, o Laravel verifica se o arquivo original foi modificado: se não foi, ele executa o cache compilado diretamente, entregando **performance máxima e zero sobrecargaa de processamento** (Pré-Processamento de Visualização).
-
 
 ```mermaid
 sequenceDiagram
@@ -2715,5 +2714,115 @@ sequenceDiagram
 > ***OBS*** - **Comando Artisan Essencial para o Blade:**
 > - `php artisan view:clear` -> Limpa todo o cache de views compilados (essencial durante depuração de layouts).
 > - `php artisan view:cache` -> Pré-compila todas as views da aplicação de uma só vez (recomendado ao realizar deploy em produção).
-
+---
 ### 3. Sintaxa de Interpolação e Defesa contra XSS
+
+**Interpolação Segura com Escape Automático (`{{}}`):**
+
+A sintaxe `{{ $variavel }}` é a forma padrão de exibição de dados no Blade:
+
+O Blade envolve internamente a variável com a função nativa `htmlspecialchars($variavel, EN_QUOTES, "UTF-8", true)`.
+
+```blade
+<!-- Exemplo de Entrada Maliciosa digitada por um usuário em um formulário: -->
+@php
+    $descricaoSensor = "<script>alert('Vulnerabilidade XSS!');</script>";
+@endphp
+
+<!-- Como você escreve no Blade: -->
+<p>{{ $descricaoSensor }}</p>
+
+<!-- O que o Blade gera no HTML compilado: -->
+<!-- &lt;script&gt;alert('Vulnerabilidade XSS!');&lt;/script&gt; -->
+```
+---
+### 4. Diretivas de Fluxo, Condicionais e Laços Otimizados
+
+O Blade substitui a sintaxe verbosa do PHP tradicional (`<?php if(...): ?>`) por diretivas iniciada em `@`.
+
+**Condicionais: `@if`, `@unless`, `@isset`, `@empty` e `@switch`**
+
+```blade
+{{-- 1. Condicional clássica --}}
+@if($ordem->status === 'CRITICA')
+    <span class="alerta-vermelho">Risco de Parada de Linha!</span>
+@elseif($ordem->status === 'ALERTA')
+    <span class="alerta-amarelo">Atenção Técnica</span>
+@else
+    <span class="alerta-verde">Operação Estável</span>
+@endif
+
+{{-- 2. @unless: Executa somente se a condição for FALSA (o inverso do if) --}}
+@unless($ordem->isConcluida())
+    <button>Finalizar Ordem de Serviço</button>
+@endunless
+
+{{-- 3. @isset e @empty --}}
+@isset($ordem->tecnico_responsavel)
+    <p>Responsável Técnico: {{ $ordem->tecnico_responsavel }}</p>
+@endisset
+```
+---
+**O Laço de Repetição: `@forelse ... @empty ... @endforelse`**
+
+Em aplicações profissionais, é um erro exibir uma tabela vazia sem aviso ao usuário. Em vez de escrever um `@if(count($lista) > 0)` seguido de `@foreach`, o Blade entrega o `@forelse`:
+
+```blade
+@forelse($ordens as $ordem)
+    <div class="linha-ordem">
+        <strong>#{{ $loop->iteration }}</strong> - {{ $ordem->titulo }}
+    </div>
+@empty
+    <div class="alerta-vazio">
+        Nenhuma ordem de serviço pendente para esta máquina.
+    </div>
+@endforelse
+```
+---
+**Outros Elementos de Iteração (Repetição)**
+
+Dentro de qualquer laço `@foreach` ou `@forelse`, o Blade disponibiliza automaticamente o objeto `$loop`, repleto de propriedades úteis:
+
+| Propriedade de `$loop` | Tipo de Retorno | Finalidade Prática no Back-End |
+| :--- | :---: | :--- |
+| `$loop->index` | `int` | Índice numérico baseado em 0 (0, 1, 2...). |
+| `$loop->iteration` | `int` | Contagem ordinal legível baseada em 1 (1, 2, 3...). |
+| `$loop->first` | `bool` | Retorna `true` se for a primeira iteração do laço. |
+| `$loop->last` | `bool` | Retorna `true` se for a última iteração do laço. |
+| `$loop->even` | `bool` | Retorna `true` em iterações pares (ideal para efeito zebra em tabelas). |
+| `$loop->odd` | `bool` | Retorna `true` em iterações ímpares. |
+| `$loop->count` | `int` | Quantidade total de itens sendo iterados na coleção. |
+---
+### 5. Herança de Layout e Componenetes Modernos
+
+Elemento usado para criar `section` que serão repetidas em diversa páginas como cabeçalho ou rodapés, por exemplo.
+
+```mermaid
+flowchart TD
+    mestre["Layout Mestre: layouts/app.blade.php<br/>• Estrutura HTML5 global<br/>• Barra de navegação e rodapé<br/>• @yield('titulo') e @yield('conteudo')<br/>• @stack('scripts')"]
+
+    v1["View Filha: ordens/index.blade.php<br/>• @extends('layouts.app')<br/>• @section('conteudo')<br/>• Consome <x-card-kpi>"]
+    v2["View Filha: equipamentos/index.blade.php<br/>• @extends('layouts.app')<br/>• @section('conteudo')<br/>• Consome <x-badge-status>"]
+
+    mestre --> v1
+    mestre --> v2
+
+    style mestre fill:#fed7aa,stroke:#ea580c,stroke-width:2px,color:#7c2d12
+    style v1 fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style v2 fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e40af
+```
+---
+**Herança Clássica com `@extends`, `@section` e `@yield`:**
+
+- **`@yield('nome_secao')`**: Define um ponto de inserção no layout mestre.
+- **`@extends('layouts.app')`**: Informa que a view filha herda toda a estrutura do layout mestre.
+- **`@section('nome_secao') ... @endsection`**: Injeta o bloco de conteúdo correspondente no `@yield`.
+---
+**Componentes Blade Modernos**
+
+Arquiteturas de software modernas priorizam componentes isolados com escopo próprio.  
+Qualquer arquivo criado em `resources/views/components/nome-componente.blade.php` pode ser consumido como uma tag HTML personalizada: `<x-nome-componente />`.
+
+- **Passagem de Propriedades:** `@props(['titulo', 'valor', 'cor' => '#38bdf8'])`.
+- **Slots Padrão:** O corpo interno da tag (`{{ $slot }}`).
+- **Slots Nomeados:** Blocos estruturados com `<x-slot:cabecalho>...</x-slot:cabecalho>`.
