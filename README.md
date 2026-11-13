@@ -2612,3 +2612,108 @@ O Laravel resolve isso através da técnica de **Method Spoofing**, que define c
     <button type="submit" style="color:red;">Excluir Parceiro</button>
 </form>
 ```
+---
+---
+## SEMANA 15 - Motor de Templates (Blade), Herança de Layout e Componentes no Laravel
+
+- **Tema:** Template Blade, Ciclos de Compilação e Cache de Views, Interpolação de Dados, Diretivas Condicionias, Laços de Repetição, Iteração, Layouts Mestres (Herança).
+---
+### 1. A Camada de Visualização (Blade)
+
+Nas semanas anteriores, construímos as bases do Laravel:
+- **Semana 13:** Infraestrutura do Laravel, Ambiente enxuto, `.env` e os comandos do Artisan CLI.
+- **Semana 14:** Roteamento RESTful, Verbos HTTP (GET, POST, PUT, DELETE), parâmetros e *Resource Controllers*.
+
+Nesta semana iremos estudar a interface visual da aplicação e a diferença entre o PHP Vanila e o PHP Laravel.
+
+> Exemplo de uso da Camada de Visualização no PHP Vanilla:
+
+```php
+<!-- ARQUIVO LEGADO: lista_ordens.php (O PESADELO DA MANUTENÇÃO) -->
+<!DOCTYPE html>
+<html>
+<head><title>Sistema de Manutenção</title></head>
+<body>
+    <header><h1>SENAI Manutenção</h1><nav>Menu...</nav></header>
+    <?php
+    // Mistura de lógica de banco e HTML solto
+    $ordens = $pdo->query("SELECT * FROM ordens")->fetchAll();
+    foreach ($ordens as $o) {
+        // Vulnerabilidade Crítica de XSS: Sem sanitização na saída
+        echo "<div>" . $o['titulo'] . " - " . $o['responsavel'] . "</div>";
+    }
+    ?>
+    <footer>SENAI 2026</footer>
+</body>
+</html>
+```
+---
+**Os Problemas da Abordagem PHP Vanilla:**
+
+1. **Duplicidade de Códigos**: Se a aplicação possuir 30 telas, as tags `<DOCTYPE html>`, `<head>` e outras  como menus e rodapés deverão ser copiadas e coladas 30 vezes. Se o logotipo da empresa mudar, por exemplo, o desenvolvedor terá que editar 30 vezes os arquivos manualmente.
+2. **Vulnerabilidade a Ataques XSS**: Ao utilizarmos `echo $variavel` sem `htmlspecialchars()`, qualquer script malicioso pode ser gravado no banco de dados (**ex:** `<script>RoubarCookies()</script>`) e ser executado silenciosamente no navegador do usuário.
+3. **Acoplamento Extremo**: A lógica de decisão de apresentação fica misturada com HTML bruto, inviabilizando testes e colaboração entre equipes de Back-End e Front-End.
+---
+**A Diferenca entre a Abordagem Caótica e o Blade**
+
+```mermaid
+flowchart TD
+    subgraph Caotico ["Abordagem Legada (Insegura e Repetitiva)"]
+        arq1["ordem_criar.php<br/>• Repete cabeçalho e menu<br/>• echo sem escape<br/>• Sem componentes"]
+        arq2["ordem_listar.php<br/>• Repete cabeçalho e menu<br/>• if/else procedural<br/>• HTML duplicado"]
+        arq3["equipamento_listar.php<br/>• Repete cabeçalho e menu<br/>• Risco de XSS<br/>• Zero modularidade"]
+    end
+
+    subgraph Blade ["Arquitetura Blade no Laravel 11 (Modular e Segura)"]
+        layout["Layout Mestre Compartilhado<br/>(resources/views/layouts/app.blade.php)"]
+        comp["Componentes Reutilizáveis<br/>(<x-card-kpi>, <x-badge-status>, <x-alert>)"]
+        views["Views Filhas Leves<br/>(Apenas o conteúdo específico com @extends)"]
+
+        layout --> views
+        comp --> views
+    end
+
+    style Caotico fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
+    style Blade fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+```
+
+### 2. A Compilação do Blade
+
+O **Blade** é o motor de templates nativo e exclusivo do framework Laravel. Oferecendo uma sintaxe expressiva, limpa e extremamente produtiva para construção de interfaces visuais.
+
+**Como o Blade Funciona por Baixo do Código Limpo**
+
+1. Todas as views Blade possuem a extensão composta `.blade.php`.
+2. Quando o Controller executa  `returna view("pagina.index")`, o Laravel lê o arquivo `resource/views/pagina/index.blade.php`.
+3. O Blade compila as diretivas (`@if`, `@forelse`, `{{}}`), convertendo em **código PHP puro e otimizado** sem a necessidade de usar Tag `<?php >`.
+4. O resultado compilado é gravado em cache no disco em `storage/framework/views/`.
+5. Nas requisições seguintes, o Laravel verifica se o arquivo original foi modificado: se não foi, ele executa o cache compilado diretamente, entregando **performance máxima e zero sobrecargaa de processamento** (Pré-Processamento de Visualização).
+
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cliente as Navegador Web
+    participant Router as Roteador (routes/web.php)
+    participant Ctrl as OrdemServicoController
+    participant Engine as Blade Compiler
+    participant Cache as storage/framework/views
+    participant Model as Model (OrdemServico)
+
+    Cliente->>Router: GET /ordens
+    Router->>Ctrl: index()
+    Ctrl->>Model: buscarTodas()
+    Model-->>Ctrl: Coleção de Ordens
+    Ctrl->>Engine: view('ordens.index', dados)
+    alt Cache não existe ou arquivo foi alterado
+        Engine->>Engine: Compila diretivas Blade para PHP puro
+        Engine->>Cache: Salva arquivo compilado (.php)
+    end
+    Cache-->>Cliente: Retorna HTML estruturado, sanitizado e rápido
+```
+
+> ***OBS*** - **Comando Artisan Essencial para o Blade:**
+> - `php artisan view:clear` -> Limpa todo o cache de views compilados (essencial durante depuração de layouts).
+> - `php artisan view:cache` -> Pré-compila todas as views da aplicação de uma só vez (recomendado ao realizar deploy em produção).
+
+### 3. Sintaxa de Interpolação e Defesa contra XSS
