@@ -5,8 +5,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use function Laravel\Prompts\table;
-
 return new class extends Migration
 {
     /**
@@ -15,13 +13,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('equipamentos', function (Blueprint $table) {
-            $table->id(); // primary key
-            $table->tag()->unique();
-            $table->nome();
-            $table->setor();
-            $table->criticidade();
-            $table->status();
-            $table->timestamps(); // carimbo de data e hora da criação da entidade no banco de dados
+            $table->id();
+            $table->string('tag')->unique();
+            $table->string('nome');
+            $table->string('setor');
+            $table->string('criticidade');
+            $table->string('status')->default('OPERANDO');
+            $table->timestamps();
         });
     }
 

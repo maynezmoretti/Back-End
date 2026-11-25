@@ -2715,7 +2715,7 @@ sequenceDiagram
 > - `php artisan view:clear` -> Limpa todo o cache de views compilados (essencial durante depuração de layouts).
 > - `php artisan view:cache` -> Pré-compila todas as views da aplicação de uma só vez (recomendado ao realizar deploy em produção).
 ---
-### 3. Sintaxa de Interpolação e Defesa contra XSS
+### 3. Sintaxe de Interpolação e Defesa contra XSS
 
 **Interpolação Segura com Escape Automático (`{{}}`):**
 
