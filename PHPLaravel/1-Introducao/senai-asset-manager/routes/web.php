@@ -5,9 +5,14 @@ use App\Http\Controllers\AtivoController;
 use App\Http\Controllers\ClienteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\FornecedorController;
 
 // Rotas do módulo de produtos
 Route::resource('produtos', ProdutoController::class);
+
+// Rotas públicas de fornecedores: somente leitura
+Route::resource('fornecedores', FornecedorController::class)
+    ->only(['index', 'show']);
 
 // Rota principal da minha aplicação: Dashboard de Ativos Fabris
 Route::get("/", [AtivoController::class, "index"]) -> name("ativos.index");
@@ -30,6 +35,27 @@ Route::get("/clientes/setor/{setor?}" , [ClienteController::class, "filtrarPorSe
     ->name("clientes.setor")
     ->whereAlphaNumeric("setor");
 
+// Rota para consultar contratos de um cliente por ano
+Route::get('/clientes/{cliente}/contratos/{ano}', [
+    ClienteController::class,
+    'contratosPorAno'
+])
+    ->whereNumber('cliente')
+    ->where('ano', '[0-9]{4}')
+    ->name('clientes.contratos.ano');
+
+// Rota para identificar a origem da requisição HTTP
+Route::get('/clientes/origem/requisicao', [
+    ClienteController::class,
+    'origemRequisicao'
+])->name('clientes.origem');
+
+// Rota para alteração parcial do status do cliente
+Route::patch('/clientes/{id}/status', [
+    ClienteController::class,
+    'alterarStatus'
+])->whereNumber('id')->name('clientes.status');
+
 // Verifica a saúde da aplicação
 Route::get('/healthz', function () {
     return response()->json([
@@ -38,3 +64,17 @@ Route::get('/healthz', function () {
         "memoria_mb" => round(memory_get_usage(true) / 1024 / 1024, 2)
     ]);
 })->name('healthz');
+
+// Grupo de rotas administrativas
+Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/auditoria/clientes', function () {
+            return response()->json([
+                'total_parceiros_ativos' => \App\Models\Cliente::where(
+                    'status',
+                    'ATIVO'
+                )->count()
+            ]);
+        })->name('auditoria.clientes');
+    });

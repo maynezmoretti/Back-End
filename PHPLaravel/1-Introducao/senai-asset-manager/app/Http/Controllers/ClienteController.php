@@ -113,4 +113,49 @@ class ClienteController extends Controller
             "titulo"  => $setor ? "Setor: ". ucfirst($setor) : "Todos os setores"
         ]);
     }
+
+    /**
+     * Exibir os contratos de um cliente em determinado ano.
+     */
+    public function contratosPorAno(int $cliente, int $ano): View
+    {
+        $registro = Cliente::findOrFail($cliente);
+
+        return view('clientes.contratos', [
+            'cliente' => $registro,
+            'ano' => $ano,
+            'titulo' => "Contratos de {$registro->razao_social} - {$ano}"
+        ]);
+    }
+
+
+    /**
+     * Identificar a origem da requisição HTTP.
+     */
+    public function origemRequisicao(Request $request): \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'mensagem' => 'Metadados da requisição identificados.'
+        ]);
+    }
+
+
+    /**
+     * Alternar o status de um cliente.
+     */
+    public function alterarStatus(Request $request, int $id): RedirectResponse
+    {
+        $cliente = Cliente::findOrFail($id);
+
+        $novoStatus = $cliente->status === 'ATIVO'
+            ? 'SUSPENSO'
+            : 'ATIVO';
+
+        $cliente->update(['status' => $novoStatus]);
+
+        return redirect()->route('clientes.index')
+            ->with('sucesso', "Status alterado para {$novoStatus}!");
+    }
 }
