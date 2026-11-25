@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orden_servicooooooooomayneos', function (Blueprint $table) {
+        Schema::create('ordem_servicos', function (Blueprint $table) {
             $table->id();
             $table->string("codigo")->unique();
             $table->string("titulo");

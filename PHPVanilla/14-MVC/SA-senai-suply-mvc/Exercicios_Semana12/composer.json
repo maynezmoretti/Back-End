@@ -1,0 +1,17 @@
+
+{
+    "name": "senai/exercicios-semana12",
+    "description": "Exercicios praticos de laboratorio - Semana 12",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        },
+        "classmap": [
+            "./"
+        ]
+    },
+    "require": {
+        "php": ">=8.1"
+    }
+}
